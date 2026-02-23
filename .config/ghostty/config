@@ -52,3 +52,6 @@ theme = tokyonight_night
 shell-integration = none
 shell-integration-features = cursor,sudo,title
 custom-shader = shaders/cursor_warp.glsl
+background-image=~/Pictures/Wallpapers/Wallpaper2.jpeg
+background-image-opacity=0.02
+background-image-fit=cover
