@@ -1,12 +1,16 @@
 # dotfiles
 
-My personal dotfiles.
+my home (~) directory of dotfiles
 
-OS: fedora 43 workspace edition
+OS: Fedora 43 Workspace Edition
+
+de: gnome
+
+login manager: gdm
 
 terminal: ghostty
 
-my gtk theme is this: <https://github.com/vinceliuice/MacTahoe-gtk-theme>
+my gtk theme: <https://github.com/vinceliuice/MacTahoe-gtk-theme>
 
 my icon theme: <https://github.com/vinceliuice/MacTahoe-icon-theme>
 
