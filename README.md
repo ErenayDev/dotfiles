@@ -1,8 +1,8 @@
 # dotfiles
 
-my home (~) directory of dotfiles
+my home (~) directory
 
-OS: Fedora 43 Workspace Edition
+OS: Fedora 44 Workspace Edition
 
 de: gnome
 
@@ -19,3 +19,5 @@ most of my config themes are based on tokyonight theme
 ghostty cursor shaders: <https://github.com/sahaj-b/ghostty-cursor-shaders>
 
 i am not responsible of any damage of your computer from these dotfiles.
+
+bye

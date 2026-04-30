@@ -1,33 +1,34 @@
-# Performance options
+
 setopt no_flow_control share_history hist_expire_dups_first hist_ignore_dups
 setopt hist_verify inc_append_history extended_history auto_cd auto_pushd
 setopt pushd_ignore_dups correct extended_glob complete_in_word always_to_end
 setopt path_dirs auto_menu auto_list auto_param_slash no_menu_complete
 setopt interactive_comments
 
-# History
 HISTFILE=$HOME/.zsh_history
 SAVEHIST=50000
 HISTSIZE=50000
 
-# Paths
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+[[ ! -f $ZINIT_HOME/zinit.zsh ]] || source "$ZINIT_HOME/zinit.zsh"
+
 typeset -U path
 path=(
-    /opt/flutter/bin
-    /bin /usr/bin /usr/local/bin /sbin
-    $HOME/.local/bin $HOME/.cargo/bin $HOME/go/bin $HOME/.bun/bin
-    $HOME/.spicetify $HOME/.pyenv/bin $HOME/.encore/bin $HOME/.deno/bin
-    $HOME/Android/Sdk/cmdline-tools/latest/bin $HOME/Android/Sdk/platform-tools
-    /opt/gradle/bin
-    /opt/nvim-linux-x86_64/bin
+    /opt/{flutter,gradle,nvim-linux-x86_64}/bin(N)
+    /{,s}bin(N)
+    /usr/{,local/}{,s}bin(N)
+    $HOME/.{local,cargo,pyenv,spicetify,encore,deno}/bin(N)
+    $HOME/{go,.bun}/bin(N)
+    $HOME/Android/Sdk/{cmdline-tools/latest,platform-tools}/bin(N)
     $path
 )
 
-# Environment variables
+
+export EDITOR=micro
 export PYENV_ROOT="$HOME/.pyenv"
 export ENCORE_INSTALL="$HOME/.encore"
 export ANDROID_HOME="$HOME/Android/Sdk"
-export ANDROID_SDK_ROOT="$HOME/Android/Sdk"
+export ANDROID_SDK_ROOT="$ANDROID_HOME"
 export GRADLE_HOME="/opt/gradle"
 export JAVA_HOME="/usr/lib/jvm/java-21-openjdk"
 export CHROME_EXECUTABLE="/bin/brave-browser"
@@ -38,12 +39,12 @@ export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --preview "bat --color=always --style=header,grid --line-range :300 {}"'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+export SDKMAN_DIR="$HOME/.sdkman"
+export PNPM_HOME="$HOME/.local/share/pnpm"
+export GPG_TTY=$(tty)
+export SCCACHE_DIR="/var/mnt/games/sccache"
+ # export RUSTC_WRAPPER=sccache
 
-# Zinit
-ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
-[[ ! -f $ZINIT_HOME/zinit.zsh ]] || source "$ZINIT_HOME/zinit.zsh"
-
-# Completion
 autoload -Uz compinit
 () {
     setopt local_options EXTENDED_GLOB
@@ -55,11 +56,9 @@ autoload -Uz compinit
     fi
 }
 
-# FZF
 [[ -f /usr/share/fzf/key-bindings.zsh ]] && source /usr/share/fzf/key-bindings.zsh
 [[ -f /usr/share/fzf/completion.zsh ]] && source /usr/share/fzf/completion.zsh
 
-# Zinit plugins
 zinit wait lucid light-mode for \
     atinit"zicompinit; zicdreplay" \
         zdharma-continuum/fast-syntax-highlighting \
@@ -68,12 +67,11 @@ zinit wait lucid light-mode for \
     blockf atpull'zinit creinstall -q .' \
         zsh-users/zsh-completions
 
-zinit wait lucid for \
-    OMZ::lib/git.zsh \
-    atload"unalias grv 2>/dev/null" \
-        OMZ::plugins/git/git.plugin.zsh
+zinit snippet OMZL::git.zsh
+zinit snippet OMZP::git
 
-# Region selection functions
+plugins=(bun)
+
 r-delregion() {
     if ((REGION_ACTIVE)) then
         zle kill-region
@@ -98,7 +96,6 @@ r-select() {
     zle $widget_name -- $@
 }
 
-# Key binding configuration
 for key kcap seq mode widget (
     sleft   kLFT   $'\e[1;2D' select   backward-char
     sright  kRIT   $'\e[1;2C' select   forward-char
@@ -132,12 +129,10 @@ for key kcap seq mode widget (
 
 bindkey -M isearch '^?' backward-delete-char
 
-# Additional key bindings
 (( $+functions[fzf-history-widget] )) && bindkey '^R' fzf-history-widget
 (( $+functions[fzf-file-widget] )) && bindkey '^T' fzf-file-widget
 (( $+functions[fzf-cd-widget] )) && bindkey '^[c' fzf-cd-widget
 
-# Aliases
 alias ls='eza --color=always --group-directories-first --icons'
 alias ll='eza -la --color=always --group-directories-first --icons'
 alias la='eza -a --color=always --group-directories-first --icons'
@@ -152,7 +147,6 @@ alias htop='btop'
 alias du='dust'
 alias df='duf'
 
-# Git aliases
 alias g='git'
 alias ga='git add'
 alias gc='git commit'
@@ -166,7 +160,6 @@ alias gcm='git commit -m'
 alias gaa='git add .'
 alias glog='git log --oneline --graph'
 
-# Navigation aliases
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
@@ -175,7 +168,6 @@ alias rel='exec zsh'
 alias vim='nvim'
 alias vi='nvim'
 
-# Functions
 fcd() {
     local dir
     dir=$(fd --type d 2>/dev/null | fzf --preview 'eza --tree --color=always {} | head -200' +m) && cd "$dir"
@@ -232,21 +224,31 @@ lazy_load() {
 
 lazy_load pyenv 'eval "$(pyenv init -)"'
 
-# Tool initialization
 eval "$(zoxide init zsh --cmd cd)"
 eval "$(starship init zsh)"
-eval "$(fnm env --use-on-cd)"
 
-# External sources
 [[ -f ~/.couchdb-workspace ]] && source ~/.couchdb-workspace
 [[ -f ~/.bun/_bun ]] && source ~/.bun/_bun
 [[ -f ~/.deno/env ]] && source ~/.deno/env
+[[ -s $SDKMAN_DIR/bin/sdkman-init.sh ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
+[[ -s $HOME/.cargo/env ]] && source "$HOME/.cargo/env"
+
+FNM_PATH="$HOME/.local/share/fnm"
+[[ -d $FNM_PATH ]] && {
+    export PATH="$FNM_PATH:$PATH"
+    eval "$(fnm env --shell zsh)"
+}
+
+[[ -s $HOME/.vite-plus/env ]] && source "$HOME/.vite-plus/env"
+
+case ":$PATH:" in
+    *":$PNPM_HOME:"*) ;;
+    *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
 
 rustormy -c Kocasinan
 
 # bun completions
 [ -s "/home/erenay/.bun/_bun" ] && source "/home/erenay/.bun/_bun"
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+export PATH=$PATH:/home/erenay/.spicetify
