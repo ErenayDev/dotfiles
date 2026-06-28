@@ -1,0 +1,361 @@
+# Default config for sway
+#
+# Copy this to ~/.config/sway/config and edit it to your liking.
+#
+# Read `man 5 sway` for a complete reference.
+
+### Variables
+#
+# Logo key. Use Mod1 for Alt.
+set $mod Mod4
+
+# Home row direction keys, like vim
+set $left h
+set $down j
+set $up k
+set $right l
+
+# Your preferred terminal emulator
+set $term alacritty
+
+# Your preferred application launcher
+set $menu wofi
+
+# Workspaces
+set $ws1 "1:web"
+set $ws2 "2:term"
+set $ws3 "3:code"
+set $ws4 "4:chat"
+set $ws5 "5:media"
+
+# Browser
+assign [app_id="helium"] $ws1
+
+# Terminal
+assign [app_id="Alacritty"] $ws2
+
+# Zed editor
+assign [app_id="app.liten.Gram"] $ws3
+
+# Discord
+assign [app_id="equibop"] $ws4
+
+### Output configuration
+#
+# Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
+output * bg ~/Pictures/Wallpapers/astronaut.png fill
+#
+# Example configuration:
+#
+#   output 'eDP-1 AU Optronics 0xE997 Unknown' pos 0,0
+#
+# You can get the names of your outputs by running: swaymsg -t get_outputs
+
+### Idle configuration
+#
+# Example configuration:
+#
+# exec swayidle -w \
+#          timeout 300 'swaylock -f -c 000000' \
+#          timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
+#          before-sleep 'swaylock -f -c 000000'
+#
+# This will lock your screen after 300 seconds of inactivity, then turn off
+# your displays after another 300 seconds, and turn your screens back on when
+# resumed. It will also lock your screen before your computer goes to sleep.
+# bindsym $mod+Shift+l exec swaylock
+
+### Input configuration
+#
+# Example configuration:
+#
+input type:touchpad {
+    dwt enabled
+    tap enabled
+    natural_scroll enabled
+    middle_emulation enabled
+}
+
+input type:keyboard {
+    xkb_layout "tr"
+}
+#
+# You can also configure each device individually.
+# Read `man 5 sway-input` for more information about this section.
+
+### Appearance
+
+# class                 border    background text      indicator   child_border
+client.focused          #99D1DB   #1A1B26   #C6D0F5   #99D1DB     #99D1DB
+client.focused_inactive #292A35   #1A1B26   #BABBF1   #292A35     #292A35
+client.unfocused        #1A1B26   #1A1B26   #BABBF1   #1A1B26     #1A1B26
+client.urgent           #E78284   #1A1B26   #E78284   #E78284     #E78284
+client.placeholder      #292A35   #292A35   #BABBF1   #292A35     #292A35
+
+client.background       #1A1B26
+
+default_border pixel 2
+default_floating_border pixel 2
+
+gaps inner 8
+gaps outer 5
+
+smart_gaps on
+smart_borders on
+
+### Window Rules
+
+for_window [floating] move position center
+
+# To ensure that Flameshot is correctly positioned on multiple outputs (monitors) add this rule to your Sway config:
+for_window [app_id="flameshot"] border pixel 0, floating enable, fullscreen disable, move absolute position 0 0
+
+### Key bindings
+#
+# Basics:
+#
+# Start a terminal
+bindsym $mod+Return exec $term
+
+# Kill focused window
+bindsym $mod+Shift+q kill
+
+# Start your launcher
+bindsym $mod+d exec "$menu --show drun"
+# Clipboard history
+bindsym $mod+Shift+v exec cliphist list | wofi --dmenu | cliphist decode | wl-copy
+
+# Waynav keybinds: https://github.com/kovetskiy/waynav
+bindsym $mod+q exec waynav
+
+# with pressing MOD1+x, we're killing the gpu-screen-recorder process
+# so, our file is saving.
+bindsym $mod+x exec pkill -SIGUSR1 -f gpu-screen-recorder && notify-send "Replay" "Last 30sec is recorded. Look at your ~/Videos/Replays folder."
+
+# screenrec
+bindsym $mod+Shift+x exec ~/.config/waybar/scripts/screenrec.sh toggle
+
+# Get last notification or close
+bindsym $mod+n exec makoctl restore
+bindsym $mod+Shift+n exec makoctl dismiss --all
+
+# Drag floating windows by holding down $mod and left mouse button.
+# Resize them with right mouse button + $mod.
+# Despite the name, also works for non-floating windows.
+# Change normal to inverse to use left mouse button for resizing and right
+# mouse button for dragging.
+floating_modifier $mod normal
+
+# Reload the configuration file
+bindsym $mod+Shift+c reload
+
+# Exit sway (logs you out of your Wayland session)
+bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+
+#
+# Moving around:
+#
+# Move your focus around
+bindsym $mod+$left focus left
+bindsym $mod+$down focus down
+bindsym $mod+$up focus up
+bindsym $mod+$right focus right
+
+# Or use $mod+[up|down|left|right]
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# Move the focused window with the same, but add Shift
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$down move down
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$right move right
+
+# Ditto, with arrow keys
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+#
+# Workspaces:
+#
+# Switch to workspace
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace number 6
+bindsym $mod+7 workspace number 7
+bindsym $mod+8 workspace number 8
+bindsym $mod+9 workspace number 9
+bindsym $mod+0 workspace number 10
+
+# Move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+Shift+9 move container to workspace number 9
+bindsym $mod+Shift+0 move container to workspace number 10
+
+# Note: workspaces can have any name you want, not just numbers.
+# We just use 1-10 as the default.
+
+#
+# Layout stuff:
+#
+# You can "split" the current object of your focus with
+# $mod+b or $mod+v, for horizontal and vertical splits
+# respectively.
+bindsym $mod+b splith
+bindsym $mod+v splitv
+
+# Switch the current container between different layout styles
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# Make the current focus fullscreen
+bindsym $mod+f fullscreen
+
+# Toggle the current focus between tiling and floating mode
+bindsym $mod+Shift+space floating toggle
+
+# Swap focus between the tiling area and the floating area
+bindsym $mod+space focus mode_toggle
+
+# Move focus to the parent container
+bindsym $mod+a focus parent
+
+#
+# Scratchpad:
+#
+# Sway has a "scratchpad", which is a bag of holding for windows.
+# You can send windows there and get them back later.
+
+# Move the currently focused window to the scratchpad
+bindsym $mod+Shift+minus move scratchpad
+
+# Show the next scratchpad window or hide the focused scratchpad window.
+# If there are multiple scratchpad windows, this command cycles through them.
+bindsym $mod+minus scratchpad show
+
+#
+# Resizing containers:
+#
+mode "resize" {
+    # left will shrink the containers width
+    # right will grow the containers width
+    # up will shrink the containers height
+    # down will grow the containers height
+
+    bindsym $left resize shrink width 10px
+    bindsym $down resize grow height 10px
+    bindsym $up resize shrink height 10px
+    bindsym $right resize grow width 10px
+
+    # Ditto, with arrow keys
+    bindsym Left resize shrink width 10px
+    bindsym Down resize grow height 10px
+    bindsym Up resize shrink height 10px
+    bindsym Right resize grow width 10px
+
+    # Return to default mode
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+#
+# Utilities:
+#
+
+# Special keys to adjust volume via PulseAudio
+# bindsym --locked XF86AudioMute exec pactl set-sink-mute \@DEFAULT_SINK@ toggle
+# bindsym --locked XF86AudioLowerVolume exec pactl set-sink-volume \@DEFAULT_SINK@ -5%
+# bindsym --locked XF86AudioRaiseVolume exec pactl set-sink-volume \@DEFAULT_SINK@ +5%
+# bindsym --locked XF86AudioMicMute exec pactl set-source-mute \@DEFAULT_SOURCE@ toggle
+
+# Volume (with wob)
+# bindsym --locked XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5% && pactl get-sink-volume @DEFAULT_SINK@ | head -1 | grep -o '[0-9]*%' | head -1 | tr -d '%' > /tmp/wob.sock
+# bindsym --locked XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5% && pactl get-sink-volume @DEFAULT_SINK@ | head -1 | grep -o '[0-9]*%' | head -1 | tr -d '%' > /tmp/wob.sock
+# bindsym --locked XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle && ( pactl get-sink-mute @DEFAULT_SINK@ | grep -q yes && echo 0 > /tmp/wob.sock || pactl get-sink-volume @DEFAULT_SINK@ | head -1 | grep -o '[0-9]*%' | head -1 | tr -d '%' > /tmp/wob.sock )
+# bindsym --locked XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle && pactl get-source-mute @DEFAULT_SOURCE@ | grep -q yes && notify-send -t 1000 "Mic" "" || notify-send -t 1000 "Mic" ""
+
+# Brightness (with wob)
+# bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+ && brightnessctl -m | cut -d, -f4 | tr -d '%' > /tmp/wob.sock
+# bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%- && brightnessctl -m | cut -d, -f4 | tr -d '%' > /tmp/wob.sock
+
+# Volume (SwayOSD)
+bindsym --locked XF86AudioRaiseVolume exec swayosd-client --output-volume raise
+bindsym --locked XF86AudioLowerVolume exec swayosd-client --output-volume lower
+bindsym --locked XF86AudioMute exec swayosd-client --output-volume mute-toggle
+bindsym --locked XF86Launch6 exec swayosd-client --input-volume mute-toggle # my laptop giving XF86Launch6 instead of XF86AudioMicMute on F4 (mic mute) key.
+
+# Brightness (SwayOSD)
+bindsym --locked XF86MonBrightnessUp exec swayosd-client --brightness raise
+bindsym --locked XF86MonBrightnessDown exec swayosd-client --brightness lower
+
+# Special keys to control media via playerctl
+bindsym --locked XF86AudioPlay exec playerctl play-pause
+bindsym --locked XF86AudioPause exec playerctl play-pause
+bindsym --locked XF86AudioPrev exec playerctl previous
+bindsym --locked XF86AudioNext exec playerctl next
+bindsym --locked XF86AudioStop exec playerctl stop
+
+# Special keys to adjust brightness via brightnessctl
+# bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%-
+# bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+
+
+# Special key to take a screenshot with flameshot
+bindsym Print exec flameshot gui
+
+#
+# Status Bar:
+#
+# Read `man 5 sway-bar` for more information about this section.
+# bar {
+#    position top
+#
+#     When the status_command prints a new line to stdout, swaybar updates.
+#     The default just shows the current date and time.
+#     status_command while date +'%Y-%m-%d %X'; do sleep 1; done
+#
+#     colors {
+#         statusline #ffffff
+#         background #323232
+#         inactive_workspace #32323200 #32323200 #5c5c5c
+#     }
+# }
+
+# bindsym $mod+d exec "dmenu_run -nf '#F8F8F2' -nb '#282A36' -sb '#6272A4' -sf '#F8F8F2' -fn 'monospace-10' -p 'dmenu%'"
+
+### Autostart
+
+exec_always sh -c 'pkill waybar; waybar'
+exec_always sh -c 'pkill mako; mako'
+exec wl-paste --type text --watch cliphist store
+exec wl-paste --type image --watch cliphist store
+exec wlsunset -S 07:00 -s 23:30 -t 4000 -T 6500 # starting 23:30 and ending 07:00
+# exec_always sh -c 'pkill wob; pkill -f "tail -f /tmp/wob.sock"; rm -f /tmp/wob.sock; mkfifo /tmp/wob.sock; tail -f /tmp/wob.sock | wob -c "$HOME/.config/wob/wob.ini"' # volume/brightness feedback
+exec_always sh -c 'pkill swayosd-server; swayosd-server'
+
+exec nm-applet
+
+# Autostarting gpu-screen-recorder.
+# if u wanna disable it temporarily, type this when the sway is started.  pkill -f gpu-screen-recorder
+# or comment the below line for permanently:
+# exec gpu-screen-recorder -w eDP-1 -f 60 -r 30 -replay-storage ram -restart-replay-on-save no -c mp4 -k hevc -ac opus -a default_output -o ~/Videos/Replays
+
+# wl-screenrec -o eDP-1 -m 60 --codec hevc --audio-codec opus -f ~/Videos/Replays/rec.mp4
+
+include /etc/sway/config.d/*

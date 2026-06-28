@@ -1,0 +1,41 @@
+window {
+  background-color: #1A1B26;
+  border: 2px solid #99D1DB;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+#container {
+  margin: 4px;
+}
+
+label {
+  color: #C6D0F5;
+  font-family: "Maple Mono", "Inter", sans-serif;
+  font-size: 14px;
+}
+
+image {
+  color: #99D1DB;
+}
+
+progressbar {
+  min-height: 6px;
+  min-width: 200px;
+  border-radius: 6px;
+}
+
+progressbar trough {
+  min-height: 6px;
+  min-width: 200px;
+  border-radius: 6px;
+  background-color: #292A35;
+  border: none;
+}
+
+progressbar progress {
+  min-height: 6px;
+  background-color: #99D1DB;
+  border-radius: 6px;
+  border: none;
+}

@@ -1,0 +1,305 @@
+
+setopt no_flow_control share_history hist_expire_dups_first hist_ignore_dups
+setopt hist_verify inc_append_history extended_history auto_cd auto_pushd
+setopt pushd_ignore_dups correct extended_glob complete_in_word always_to_end
+setopt path_dirs auto_menu auto_list auto_param_slash no_menu_complete
+setopt interactive_comments
+
+HISTFILE=$HOME/.zsh_history
+SAVEHIST=50000
+HISTSIZE=50000
+
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+[[ ! -f $ZINIT_HOME/zinit.zsh ]] || source "$ZINIT_HOME/zinit.zsh"
+
+typeset -U path
+path=(
+    /opt/{flutter,gradle,nvim-linux-x86_64,shader-slang-bin}/bin(N)
+    /{,s}bin(N)
+    /usr/{,local/}{,s}bin(N)
+    $HOME/.{local,cargo,pyenv,spicetify,encore,deno}/bin(N)
+    $HOME/{go,.bun}/bin(N)
+    $HOME/Android/Sdk/{cmdline-tools/latest,platform-tools}/bin(N)
+    $path
+)
+
+
+export EDITOR=micro
+export PYENV_ROOT="$HOME/.pyenv"
+export ENCORE_INSTALL="$HOME/.encore"
+export ANDROID_HOME="$HOME/Android/Sdk"
+export ANDROID_SDK_ROOT="$ANDROID_HOME"
+export GRADLE_HOME="/opt/gradle"
+export JAVA_HOME="/usr/lib/jvm/java-21-openjdk"
+export CHROME_EXECUTABLE="/bin/brave-browser"
+export MICRO_TRUECOLOR=1
+export VDPAU_DRIVER=radeonsi
+export BAT_THEME="tokyonight_night"
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --preview "bat --color=always --style=header,grid --line-range :300 {}"'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+export SDKMAN_DIR="$HOME/.sdkman"
+export PNPM_HOME="$HOME/.local/share/pnpm"
+export GPG_TTY=$(tty)
+export SCCACHE_DIR="/var/mnt/games/sccache"
+export ELECTRON_OZONE_PLATFORM_HINT="wayland"
+export LD_LIBRARY_PATH="/opt/shader-slang-bin/lib:$LD_LIBRARY_PATH"
+export GITHUB_USERNAME="ErenayDev"
+export GH_USERNAME="ErenayDev"
+export XDG_PICTURES_DIR="~/Pictures/Screenshots"
+export SDL_VIDEODRIVER=wayland
+export _JAVA_AWT_WM_NONREPARENTING=1
+export QT_QPA_PLATFORM=wayland
+export XDG_CURRENT_DESKTOP=sway
+export XDG_SESSION_DESKTOP=sway
+ # export RUSTC_WRAPPER=sccache
+
+autoload -Uz compinit
+() {
+    setopt local_options EXTENDED_GLOB
+    local zcompdump="$HOME/.zcompdump"
+    if [[ $zcompdump(#qNmh+24) ]]; then
+        compinit -d "$zcompdump"
+    else
+        compinit -C -d "$zcompdump"
+    fi
+}
+
+[[ -f /usr/share/fzf/key-bindings.zsh ]] && source /usr/share/fzf/key-bindings.zsh
+[[ -f /usr/share/fzf/completion.zsh ]] && source /usr/share/fzf/completion.zsh
+
+zinit wait lucid light-mode for \
+    atinit"zicompinit; zicdreplay" \
+        zdharma-continuum/fast-syntax-highlighting \
+    atload"!_zsh_autosuggest_start" \
+        zsh-users/zsh-autosuggestions \
+    blockf atpull'zinit creinstall -q .' \
+        zsh-users/zsh-completions
+
+zinit snippet OMZL::git.zsh
+zinit snippet OMZP::git
+
+plugins=(bun)
+
+r-delregion() {
+    if ((REGION_ACTIVE)) then
+        zle kill-region
+    else
+        local widget_name=$1
+        shift
+        zle $widget_name -- $@
+    fi
+}
+
+r-deselect() {
+    ((REGION_ACTIVE = 0))
+    local widget_name=$1
+    shift
+    zle $widget_name -- $@
+}
+
+r-select() {
+    ((REGION_ACTIVE)) || zle set-mark-command
+    local widget_name=$1
+    shift
+    zle $widget_name -- $@
+}
+
+for key kcap seq mode widget (
+    sleft   kLFT   $'\e[1;2D' select   backward-char
+    sright  kRIT   $'\e[1;2C' select   forward-char
+    sup     kri    $'\e[1;2A' select   up-line-or-history
+    sdown   kind   $'\e[1;2B' select   down-line-or-history
+    send    kEND   $'\E[1;2F' select   end-of-line
+    send2   x      $'\E[4;2~' select   end-of-line
+    shome   kHOM   $'\E[1;2H' select   beginning-of-line
+    shome2  x      $'\E[1;2~' select   beginning-of-line
+    left    kcub1  $'\EOD'    deselect backward-char
+    right   kcuf1  $'\EOC'    deselect forward-char
+    end     kend   $'\EOF'    deselect end-of-line
+    end2    x      $'\E4~'    deselect end-of-line
+    home    khome  $'\EOH'    deselect beginning-of-line
+    home2   x      $'\E1~'    deselect beginning-of-line
+    csleft  x      $'\E[1;6D' select   backward-word
+    csright x      $'\E[1;6C' select   forward-word
+    csend   x      $'\E[1;6F' select   end-of-line
+    cshome  x      $'\E[1;6H' select   beginning-of-line
+    cleft   x      $'\E[1;5D' deselect backward-word
+    cright  x      $'\E[1;5C' deselect forward-word
+    del     kdch1   $'\E[3~'  delregion delete-char
+    bs      x       $'^?'     delregion backward-delete-char
+) {
+    eval "key-$key() {
+        r-$mode $widget \$@
+    }"
+    zle -N key-$key
+    bindkey ${terminfo[$kcap]-$seq} key-$key
+}
+
+bindkey -M isearch '^?' backward-delete-char
+
+(( $+functions[fzf-history-widget] )) && bindkey '^R' fzf-history-widget
+(( $+functions[fzf-file-widget] )) && bindkey '^T' fzf-file-widget
+(( $+functions[fzf-cd-widget] )) && bindkey '^[c' fzf-cd-widget
+
+alias ls='eza --color=always --group-directories-first --icons'
+alias ll='eza -la --color=always --group-directories-first --icons'
+alias la='eza -a --color=always --group-directories-first --icons'
+alias lt='eza -aT --color=always --group-directories-first --icons --git-ignore'
+alias l='eza -F --color=always --group-directories-first --icons'
+alias cat='bat --theme="tokyonight_night" --paging=never' # --style=plain
+alias find='fd'
+alias grep='rg'
+alias ps='procs'
+alias top='btop'
+alias htop='btop'
+alias du='dust'
+alias df='duf'
+
+alias g='git'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git pull'
+alias gs='git status'
+alias gd='git diff'
+alias gb='git branch'
+alias gco='git checkout'
+alias gcm='git commit -m'
+alias gaa='git add .'
+alias glog='git log --oneline --graph'
+
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias cl='clear'
+alias rel='exec zsh'
+alias vim='nvim'
+alias vi='nvim'
+
+fcd() {
+    local dir
+    dir=$(fd --type d 2>/dev/null | fzf --preview 'eza --tree --color=always {} | head -200' +m) && cd "$dir"
+}
+
+fvim() {
+    local file
+    file=$(fzf --preview 'bat --color=always --style=header,grid --line-range :300 {}' +m) && nvim "$file"
+}
+
+fkill() {
+    local pid
+    pid=$(ps aux | sed 1d | fzf -m | awk '{print $2}') && kill -9 "$pid"
+}
+
+fhistory() {
+    local cmd
+    cmd=$(history | fzf --tac --no-sort | sed 's/ *[0-9]* *//') && eval "$cmd"
+}
+
+fman() {
+    man -k . | fzf --prompt='Man> ' | awk '{print $1}' | xargs -r man
+}
+
+mkcd() { mkdir -p "$1" && cd "$1" }
+backup() { cp "$1"{,.bak} }
+
+extract() {
+    if [ -f $1 ] ; then
+        case $1 in
+            *.tar.bz2)   tar xjf $1     ;;
+            *.tar.gz)    tar xzf $1     ;;
+            *.bz2)       bunzip2 $1     ;;
+            *.rar)       unrar e $1     ;;
+            *.gz)        gunzip $1      ;;
+            *.tar)       tar xf $1      ;;
+            *.tbz2)      tar xjf $1     ;;
+            *.tgz)       tar xzf $1     ;;
+            *.zip)       unzip $1       ;;
+            *.Z)         uncompress $1  ;;
+            *.7z)        7z x $1        ;;
+            *)           echo "'$1' cannot be extracted" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
+
+lazy_load() {
+    local command=$1
+    local load_command=$2
+    eval "$command() { unfunction $command; $load_command; $command \$@ }"
+}
+
+lazy_load pyenv 'eval "$(pyenv init -)"'
+
+eval "$(zoxide init zsh --cmd cd)"
+eval "$(starship init zsh)"
+
+[[ -f ~/.couchdb-workspace ]] && source ~/.couchdb-workspace
+[[ -f ~/.bun/_bun ]] && source ~/.bun/_bun
+[[ -f ~/.deno/env ]] && source ~/.deno/env
+[[ -s $SDKMAN_DIR/bin/sdkman-init.sh ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
+[[ -s $HOME/.cargo/env ]] && source "$HOME/.cargo/env"
+
+FNM_PATH="$HOME/.local/share/fnm"
+[[ -d $FNM_PATH ]] && {
+    export PATH="$FNM_PATH:$PATH"
+    eval "$(fnm env --shell zsh)"
+}
+
+[[ -s $HOME/.vite-plus/env ]] && source "$HOME/.vite-plus/env"
+
+case ":$PATH:" in
+    *":$PNPM_HOME:"*) ;;
+    *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+
+# rustormy -c Kocasinan
+fastfetch
+
+# bun completions
+[ -s "/home/erenay/.bun/_bun" ] && source "/home/erenay/.bun/_bun"
+
+export PATH=$PATH:/home/erenay/.spicetify
+
+# Load a few important annexes, without Turbo
+# (this is currently required for annexes)
+zinit light-mode for \
+    zdharma-continuum/zinit-annex-as-monitor \
+    zdharma-continuum/zinit-annex-bin-gem-node \
+    zdharma-continuum/zinit-annex-patch-dl \
+    zdharma-continuum/zinit-annex-rust
+
+#compdef pnpm
+###-begin-pnpm-completion-###
+if type compdef &>/dev/null; then
+  _pnpm_completion () {
+    local reply
+    local si=$IFS
+
+    IFS=$'\n' reply=($(COMP_CWORD="$((CURRENT-1))" COMP_LINE="$BUFFER" COMP_POINT="$CURSOR" SHELL=zsh pnpm completion-server -- "${words[@]}"))
+    IFS=$si
+
+    if [ "$reply" = "__tabtab_complete_files__" ]; then
+      _files
+    else
+      _describe 'values' reply
+    fi
+  }
+  # When called by the Zsh completion system, this will end with
+  # "loadautofunc" when initially autoloaded and "shfunc" later on, otherwise,
+  # the script was "eval"-ed so use "compdef" to register it with the
+  # completion system
+  if [[ $zsh_eval_context == *func ]]; then
+    _pnpm_completion "$@"
+  else
+    compdef _pnpm_completion pnpm
+  fi
+fi
+###-end-pnpm-completion-###
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
