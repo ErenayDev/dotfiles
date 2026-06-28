@@ -1,28 +1,32 @@
 Browser:
 
+- Helium (Primary)
 - Zen
-- Helium
-- Brave
+- Brave Origin (free for linux, yay!)
 
 Editor
 
-- Lazyvim
-- Zed
+- AstroNvim
+- Gram (based on zed)
 
 Terminal
 
+- Alacritty (Primary)
+- Foot
 - Ghostty
 
 CLI
 
+- mise
 - Zellij
 
 Music
 
-- Spotify
+- Local music files with mpv or vlc
 
 Note-taking
 
+- Linear (from browser)
 - Obsidian
 
 Game
@@ -35,8 +39,7 @@ Game
 
 Messaging
 
-- Vencord (Discord)
-- Fluxer
+- Discord
 - Signal
 - Thunderbird
 
@@ -137,4 +140,7 @@ lrwxrwxrwx@    - erenay 29 Oct  2025 󰡯 rustfmt -> rustup
 .rwxr-xr-x@ 1.2M erenay 31 Jan 10:43 󰡯 zoxide
 ```
 
-DNF: see [dnf-installed-packages.txt](./dnf-installed-packages.txt)
+Arch: see [arch-installed-packages.txt](./arch-installed-packages.txt)
+AUR: see [aur-installed-packages.txt](./aur-installed-packages.txt)
+
+# vim: set shiftwidth=4 tabstop=4 expandtab:

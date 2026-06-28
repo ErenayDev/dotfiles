@@ -1,0 +1,23 @@
+clear
+super+q start,grid 2
+
+# Cell stuff. i changed "a" and "w" behaivor becuase it uses reverse for me.
+q cell-select 1,warp
+a cell-select 2,warp
+w cell-select 3,warp
+s cell-select 4,warp
+
+# Movements
+h move-left,warp
+j move-down,warp
+k move-up,warp
+l move-right,warp
+
+# Scrolling
+n click 5
+m click 4
+
+space warp,click 1,clear,start,grid 2
+BackSpace history-back
+Return end
+Escape end

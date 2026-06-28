@@ -2,22 +2,10 @@
 
 my home (~) directory
 
-OS: Fedora 44 Workspace Edition
+OS: Arch Linux
 
-de: gnome
+WM: [Sway 1.12](https://swaywm.org/) (Wayland)
 
-login manager: gdm
-
-terminal: ghostty
-
-my gtk theme: <https://github.com/vinceliuice/MacTahoe-gtk-theme>
-
-my icon theme: <https://github.com/vinceliuice/MacTahoe-icon-theme>
+login manager: sddm with [silent-sddm](https://github.com/uiriansan/SilentSDDM) theme
 
 most of my config themes are based on tokyonight theme
-
-ghostty cursor shaders: <https://github.com/sahaj-b/ghostty-cursor-shaders>
-
-i am not responsible of any damage of your computer from these dotfiles.
-
-bye
