@@ -157,13 +157,8 @@ return {
   { "TheBlob42/houdini.nvim", lazy = false },
   { "mzlogin/vim-markdown-toc", lazy = false },
   {
-    "ray-x/lsp_signature.nvim",
-    event = "BufRead",
-    config = function() require("lsp_signature").setup() end,
-  },
-  {
     "ruifm/gitlinker.nvim",
-    requires = "nvim-lua/plenary.nvim",
+	dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
       local gitlinker = require "gitlinker"
       gitlinker.setup()
