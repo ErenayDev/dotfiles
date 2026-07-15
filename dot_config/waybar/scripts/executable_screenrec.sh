@@ -6,9 +6,18 @@ case "$1" in
       pkill -INT -x wl-screenrec
       notify-send "Screen Recording" "Stopped"
     else
-      file="$HOME/Videos/Replays/$(date +%Y-%m-%d_%H-%M-%S).mp4"
-      wl-screenrec -o eDP-1 -m 60 --codec hevc --audio-codec opus -f "$file" &
-      notify-send "Screen Recording" "Started: $(basename "$file")"
+      dir="$HOME/Videos/Replays"
+      mkdir -p "$dir" || {
+        notify-send "Screen Recording" "Failed to create $dir"
+        exit 1
+      }
+   		 file="$dir/$(date +%Y-%m-%d_%H-%M-%S).mp4"
+		 if wl-screenrec -o eDP-1 -m 60 --codec hevc --audio --audio-device alsa_output.pci-0000_03_00.6.HiFi__Speaker__sink.monitor --audio-codec opus -f "$file"  & then
+         notify-send "Screen Recording" "Started: $(basename "$file")"
+      else
+        notify-send "Screen Recording" "Failed to start"
+        exit 1
+      fi
     fi
     pkill -RTMIN+8 waybar
     ;;

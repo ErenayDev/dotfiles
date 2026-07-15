@@ -9,7 +9,39 @@ return {
 
   -- == Examples of Adding Plugins ==
 
-  "andweeb/presence.nvim",
+{
+  'vyfor/cord.nvim',
+   ---@type CordConfig
+  opts = {
+    display = {
+      theme = 'minecraft',-- 'default', 'atom', 'catppuccin', 'minecraft', 'void', 'classic'
+      flavor = 'dark',    -- 'dark', 'light', 'accent'
+      view = 'full',      -- both the file/asset icon and the editor icon (default)
+      -- view = 'asset',  -- only the file/asset icon
+      -- view = 'editor', -- only the editor icon
+      -- view = 'auto',   -- both, but drop the file icon in new/empty buffers
+    },
+    buttons = {
+      {
+        label = function(opts)
+          return opts.repo_url and 'View Repository' or 'My Website'
+        end,
+        url = function(opts)
+          return opts.repo_url or 'https://erenaydev.com.tr'
+        end,
+      },
+    },
+    idle = {
+      details = function(opts)
+        return 'Taking a break from ' .. opts.workspace
+      end,
+      state = 'Be right back',
+      tooltip = '😴',
+    }
+  }
+},
+-- { "wfxr/minimap.vim" },
+{ 'wakatime/vim-wakatime', lazy = false },
   {
     "ray-x/lsp_signature.nvim",
     event = "BufRead",
@@ -45,7 +77,7 @@ return {
   "selimacerbas/markdown-preview.nvim",
   dependencies = { "selimacerbas/live-server.nvim" },
   config = function()
-    require("markdown-preview").setup({
+    require("markdown_preview").setup({
       -- all optional; sane defaults shown
       instance_mode = "takeover",  -- "takeover" (one tab) or "multi" (tab per instance)
       port = 0,                    -- 0 = auto (8421 for takeover, OS-assigned for multi)
@@ -83,7 +115,6 @@ return {
     },
   },
 
-  -- You can disable default plugins as follows:
   { "max397574/better-escape.nvim", enabled = true },
 
   -- You can also easily customize additional setup of plugins that is outside of the plugin's setup call

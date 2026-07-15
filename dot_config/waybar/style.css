@@ -88,7 +88,11 @@
 }
 
 /* --- Center Module --- */
-#clock {
+#mpris {
+margin-left: 5px;	
+}
+
+#clock,#mpris {
   background-color: @bg;
   padding: 0.3rem 0.7rem;
   margin: 5px 0px;
@@ -99,7 +103,7 @@
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
-#clock:hover {
+#clock:hover,#mpris:hover {
   /* background-color: rgba(153, 209, 219, 0.1); */
   background: @bg-hover;
   color: @fg;

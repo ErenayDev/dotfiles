@@ -10,26 +10,28 @@
     "cpu"
   ],
   "modules-center": [
-    "clock"
+    "clock",
+    "mpris"
   ],
   "modules-right": [
-  	"custom/screenrec",
+    "custom/screenrec",
     "custom/pomodoro",
     "bluetooth",
     "network",
     "pulseaudio",
     "battery"
   ],
-	"sway/workspaces": {
-	  "format": "{icon}",
-	  "format-icons": {
-	    "1:web": "󰖟",
-	    "2:term": "󰆍",
-	    "3:code": "",
-	    "4:chat": "",
-	    "5:media": "󰊴"
-	  }
-	},
+  "sway/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+      "1:web": "󰖟",
+      "2:term": "󰆍",
+      "3:code": "",
+      "4:chat": "",
+      "5:game": "󰊴",
+      "6:media": ""
+    }
+  },
   "bluetooth": {
     "format": "󰂲",
     "format-on": "{icon}",
@@ -48,6 +50,21 @@
     "tooltip": false,
     "format": "{:%H:%M:%S  -  %A, %d}",
     "interval": 1
+  },
+  "mpris": {
+    "format": "{player_icon} {dynamic}",
+    "format-paused": "{status_icon} <i>{dynamic}</i>",
+    "justify": "center",
+    "interval": 1,
+    "player-icons": {
+      "default": "▶"
+    },
+    "status-icons": {
+      "paused": "⏸"
+    },
+    "tooltip": true,
+    "tooltip-format": "{player} ({status}) {dynamic}",
+    "max-length": 30
   },
   "network": {
     "format-wifi": "󰤢",
@@ -119,7 +136,7 @@
   },
   "custom/lock": {
     "tooltip": false,
-  	"on-click": "swaylock",
+    "on-click": "swaylock",
     "format": ""
   },
   "custom/screenrec": {
